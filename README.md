@@ -18,6 +18,14 @@ Image Enlarger is a Chrome extension that enhances your browsing experience by a
   - Set minimum image size to process
   - Exclude specific domains
 
+### Screenshots
+
+![Hovering over an image](Screenshots/enlarged-images.jpeg)
+*Hovering over a thumbnail shows an enlarged version*
+
+![Settings panel](Screenshots/panel.png)
+*Customizable settings panel*
+
 ### Installation
 
 1. Download the extension from the Chrome Web Store or load it as an unpacked extension
@@ -99,6 +107,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
   - 选择跟随光标或固定位置显示
   - 设置要处理的最小图像尺寸
   - 排除特定域名
+
+### 截图展示
+
+![悬停在图像上](Screenshots/enlarged-images.jpeg)
+*悬停在缩略图上显示放大版本*
+
+![设置面板](Screenshots/panel.png)
+*可自定义的设置面板*
 
 ### 安装
 
