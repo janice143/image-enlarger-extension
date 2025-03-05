@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Enlarger Settings</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        width: 350px;
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .setting-group {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      label {
+        margin-right: 10px;
+      }
+
+      input[type='number'] {
+        width: 60px;
+      }
+
+      select {
+        width: 120px;
+      }
+
+      .excluded-domains {
+        margin-top: 10px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 60px;
+        margin-top: 5px;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 15px;
+      }
+
+      button {
+        padding: 8px 15px;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+
+      .save-button {
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+      }
+
+      .reset-button {
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Image Enlarger Settings</h1>
+
+    <div class="setting-group">
+      <div class="setting-row">
+        <label for="enlargeOnHover">Enable enlargement on hover</label>
+        <input type="checkbox" id="enlargeOnHover" />
+      </div>
+
+      <div class="setting-row">
+        <label for="enlargeImages">Enlarge images</label>
+        <input type="checkbox" id="enlargeImages" />
+      </div>
+
+      <div class="setting-row">
+        <label for="showImagesFromLinks">Show images from links</label>
+        <input type="checkbox" id="showImagesFromLinks" />
+      </div>
+
+      <div class="setting-row">
+        <label for="showVideosFromLinks">Show videos from links</label>
+        <input type="checkbox" id="showVideosFromLinks" />
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-row">
+        <label for="zoomFactor">Zoom factor</label>
+        <input type="number" id="zoomFactor" min="1" max="10" step="0.1" />
+      </div>
+
+      <div class="setting-row">
+        <label for="hoverDelay">Hover delay (ms)</label>
+        <input type="number" id="hoverDelay" min="0" max="2000" step="50" />
+      </div>
+
+      <div class="setting-row">
+        <label for="displayPosition">Display position</label>
+        <select id="displayPosition">
+          <option value="cursor">Follow cursor</option>
+          <option value="fixed">Fixed center</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-row">
+        <label for="minImageSize">Minimum image size (px)</label>
+        <input type="number" id="minImageSize" min="0" max="500" />
+      </div>
+
+      <div class="setting-row">
+        <label for="maxEnlargedSize">Maximum enlarged size (px)</label>
+        <input type="number" id="maxEnlargedSize" min="100" max="2000" />
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label for="excludedDomains">Excluded domains (one per line)</label>
+      <div class="excluded-domains">
+        <textarea id="excludedDomains" placeholder="example.com"></textarea>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="reset-button" id="resetButton">Reset to Default</button>
+      <button class="save-button" id="saveButton">Save Settings</button>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
