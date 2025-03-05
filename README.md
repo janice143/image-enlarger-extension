@@ -20,10 +20,10 @@ Image Enlarger is a Chrome extension that enhances your browsing experience by a
 
 ### Screenshots
 
-![Hovering over an image](Screenshots/enlarged-images.jpeg)
+![Hovering over an image](screenshots/enlarged-images.jpeg)
 *Hovering over a thumbnail shows an enlarged version*
 
-![Settings panel](Screenshots/panel.png)
+![Settings panel](screenshots/panel.png)
 *Customizable settings panel*
 
 ### Installation
@@ -110,10 +110,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ### 截图展示
 
-![悬停在图像上](Screenshots/enlarged-images.jpeg)
+![悬停在图像上](screenshots/enlarged-images.jpeg)
 *悬停在缩略图上显示放大版本*
 
-![设置面板](Screenshots/panel.png)
+![设置面板](screenshots/panel.png)
 *可自定义的设置面板*
 
 ### 安装
