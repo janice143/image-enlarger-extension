@@ -5,11 +5,9 @@ chrome.runtime.onInstalled.addListener(() => {
     enlargeImages: true,
     showImagesFromLinks: true,
     showVideosFromLinks: true,
-    zoomFactor: 2,
+    displayWidth: 800,
     hoverDelay: 100,
     displayPosition: 'cursor',
-    minImageSize: 50,
-    maxEnlargedSize: 1500,
     excludedDomains: []
   };
 

@@ -4,11 +4,9 @@ let settings = {
   enlargeImages: true,
   showImagesFromLinks: true,
   showVideosFromLinks: true,
-  zoomFactor: 2,
+  displayWidth: 800,
   hoverDelay: 100,
   displayPosition: 'cursor',
-  minImageSize: 50,
-  maxEnlargedSize: 1500,
   excludedDomains: []
 };
 
@@ -128,10 +126,11 @@ function processNewElement(element) {
 }
 
 function shouldProcessImage(img) {
-  // Check if image is large enough to process
-  return (
-    img.width >= settings.minImageSize || img.height >= settings.minImageSize
-  );
+  // Don't process images inside our overlay
+  if (img.closest('#image-enlarger-overlay')) return false;
+
+  // Ignore tiny images to avoid clutter
+  return img.width >= 30 && img.height >= 30;
 }
 
 function isImageLink(url) {
@@ -143,6 +142,9 @@ function isVideoLink(url) {
 }
 
 function handleMouseEnter(event) {
+  // Ignore if mouse is over the overlay itself
+  if (event.target.closest('#image-enlarger-overlay')) return;
+
   lastEvent = event;
   currentTarget = event.target;
 
@@ -180,12 +182,10 @@ function handleLinkEnter(event) {
 }
 
 function handleMouseLeave() {
-  // Clear timer and hide overlay
   if (hoverTimer) {
     clearTimeout(hoverTimer);
     hoverTimer = null;
   }
-
   hideOverlay();
   currentTarget = null;
   lastEvent = null;
@@ -207,8 +207,7 @@ function showEnlargedImage(img, event) {
   enlargedImg.src = img.src;
 
   // Add loading indicator
-  overlay.innerHTML =
-    '<div style="color: white; text-align: center;">Loading...</div>';
+  overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Loading...</div>';
   overlay.style.display = 'block';
 
   // Position the overlay initially
@@ -219,28 +218,16 @@ function showEnlargedImage(img, event) {
     // Clear overlay and add enlarged image
     overlay.innerHTML = '';
 
-    // Set image size based on zoom factor but respect max size
+    // Calculate dimensions to fit displayWidth while maintaining aspect ratio
     const originalWidth = enlargedImg.naturalWidth;
     const originalHeight = enlargedImg.naturalHeight;
+    const ratio = originalHeight / originalWidth;
 
-    // Calculate dimensions that maintain aspect ratio
-    let width = originalWidth * settings.zoomFactor;
-    let height = originalHeight * settings.zoomFactor;
+    // Always display at displayWidth (scale up small images, scale down large ones)
+    let width = settings.displayWidth;
+    let height = width * ratio;
 
-    // Apply maximum size constraint while maintaining aspect ratio
-    if (width > settings.maxEnlargedSize) {
-      const ratio = settings.maxEnlargedSize / width;
-      width = settings.maxEnlargedSize;
-      height = height * ratio;
-    }
-
-    if (height > settings.maxEnlargedSize) {
-      const ratio = settings.maxEnlargedSize / height;
-      height = settings.maxEnlargedSize;
-      width = width * ratio;
-    }
-
-    // Apply dimensions directly
+    // Apply dimensions
     enlargedImg.width = width;
     enlargedImg.height = height;
 
@@ -252,8 +239,7 @@ function showEnlargedImage(img, event) {
 
   // Handle image load errors
   enlargedImg.onerror = function () {
-    overlay.innerHTML =
-      '<div style="color: white; text-align: center;">Error loading image</div>';
+    overlay.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">Error loading image</div>';
   };
 }
 
@@ -262,8 +248,7 @@ function showImageFromLink(url, event) {
   const img = document.createElement('img');
 
   // Add loading indicator
-  overlay.innerHTML =
-    '<div style="color: white; text-align: center;">Loading...</div>';
+  overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Loading...</div>';
   overlay.style.display = 'block';
 
   // Position the overlay initially
@@ -276,28 +261,16 @@ function showImageFromLink(url, event) {
     // Clear overlay and add image
     overlay.innerHTML = '';
 
-    // Set image size based on zoom factor but respect max size
+    // Calculate dimensions to fit displayWidth while maintaining aspect ratio
     const originalWidth = img.naturalWidth;
     const originalHeight = img.naturalHeight;
+    const ratio = originalHeight / originalWidth;
 
-    // Calculate dimensions that maintain aspect ratio
-    let width = originalWidth * settings.zoomFactor;
-    let height = originalHeight * settings.zoomFactor;
+    // Always display at displayWidth (scale up small images, scale down large ones)
+    let width = settings.displayWidth;
+    let height = width * ratio;
 
-    // Apply maximum size constraint while maintaining aspect ratio
-    if (width > settings.maxEnlargedSize) {
-      const ratio = settings.maxEnlargedSize / width;
-      width = settings.maxEnlargedSize;
-      height = height * ratio;
-    }
-
-    if (height > settings.maxEnlargedSize) {
-      const ratio = settings.maxEnlargedSize / height;
-      height = settings.maxEnlargedSize;
-      width = width * ratio;
-    }
-
-    // Apply dimensions directly
+    // Apply dimensions
     img.width = width;
     img.height = height;
 
@@ -309,8 +282,7 @@ function showImageFromLink(url, event) {
 
   // Handle image load errors
   img.onerror = function () {
-    overlay.innerHTML =
-      '<div style="color: white; text-align: center;">Error loading image</div>';
+    overlay.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">Error loading image</div>';
   };
 }
 
@@ -321,12 +293,11 @@ function showVideoFromLink(url, event) {
   video.controls = true;
   video.autoplay = true;
   video.muted = true;
-  video.style.maxWidth = `${settings.maxEnlargedSize}px`;
-  video.style.maxHeight = `${settings.maxEnlargedSize}px`;
+  video.style.maxWidth = `${settings.displayWidth}px`;
+  video.style.maxHeight = `${settings.displayWidth}px`;
 
   // Add loading indicator
-  overlay.innerHTML =
-    '<div style="color: white; text-align: center;">Loading video...</div>';
+  overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Loading video...</div>';
   overlay.style.display = 'block';
 
   // Position the overlay initially
@@ -344,8 +315,7 @@ function showVideoFromLink(url, event) {
 
   // Handle video load errors
   video.onerror = function () {
-    overlay.innerHTML =
-      '<div style="color: white; text-align: center;">Error loading video</div>';
+    overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Error loading video</div>';
   };
 }
 
@@ -386,35 +356,35 @@ function positionOverlaySmartly(event) {
       const spaceAbove = targetRect.top - 10;
 
       // PRIORITY 1: Position below the target (preferred position)
-      if (spaceBelow >= overlayHeight) {
+      if (spaceBelow >= Math.min(overlayHeight, viewportHeight - 20)) {
         top = targetRect.bottom + 10;
         // Center horizontally with the target
         left = targetRect.left + targetRect.width / 2 - overlayWidth / 2;
       }
       // PRIORITY 2: Position to the right
-      else if (spaceRight >= overlayWidth) {
+      else if (spaceRight >= Math.min(overlayWidth, viewportHeight - 20)) {
         left = targetRect.right + 10;
         // Center vertically with the target
         top = targetRect.top + targetRect.height / 2 - overlayHeight / 2;
       }
       // PRIORITY 3: Position to the left
-      else if (spaceLeft >= overlayWidth) {
+      else if (spaceLeft >= Math.min(overlayWidth, viewportHeight - 20)) {
         left = targetRect.left - overlayWidth - 10;
         // Center vertically with the target
         top = targetRect.top + targetRect.height / 2 - overlayHeight / 2;
       }
       // PRIORITY 4: Position above
-      else if (spaceAbove >= overlayHeight) {
+      else if (spaceAbove >= Math.min(overlayHeight, viewportHeight - 20)) {
         top = targetRect.top - overlayHeight - 10;
         // Center horizontally with the target
         left = targetRect.left + targetRect.width / 2 - overlayWidth / 2;
       }
-      // PRIORITY 5: If no good position, use a modified version of below
-      // that shows as much of the image as possible
+      // PRIORITY 5: If no good position, use viewport-based positioning
       else {
-        top = Math.max(10, viewportHeight - overlayHeight - 10);
-        // Center horizontally with the target if possible
-        left = targetRect.left + targetRect.width / 2 - overlayWidth / 2;
+        // Position at top of viewport to ensure visibility
+        top = scrollY + 10;
+        // Center horizontally
+        left = scrollX + (viewportWidth - overlayWidth) / 2;
       }
     } else {
       // Fallback to cursor position if no target
@@ -425,22 +395,22 @@ function positionOverlaySmartly(event) {
     }
 
     // Final bounds checking to ensure overlay stays within viewport
-    if (left + overlayWidth > viewportWidth) {
-      left = Math.max(10, viewportWidth - overlayWidth - 10);
+    if (left + overlayWidth > scrollX + viewportWidth) {
+      left = Math.max(scrollX, scrollX + viewportWidth - overlayWidth - 10);
     }
-    if (left < 0) {
-      left = 10;
+    if (left < scrollX) {
+      left = scrollX + 10;
     }
-    if (top + overlayHeight > viewportHeight) {
-      top = Math.max(10, viewportHeight - overlayHeight - 10);
+    if (top + overlayHeight > scrollY + viewportHeight) {
+      top = Math.max(scrollY, scrollY + viewportHeight - overlayHeight - 10);
     }
-    if (top < 0) {
-      top = 10;
+    if (top < scrollY) {
+      top = scrollY + 10;
     }
 
     // Apply the calculated position (add scroll offset to convert to absolute position)
-    overlay.style.left = `${left + scrollX}px`;
-    overlay.style.top = `${top + scrollY}px`;
+    overlay.style.left = `${left}px`;
+    overlay.style.top = `${top}px`;
     overlay.style.transform = 'none'; // Reset any transform
   });
 }

@@ -22,10 +22,8 @@ function loadSettings() {
       settings.showVideosFromLinks;
 
     // Set number input values
-    document.getElementById('zoomFactor').value = settings.zoomFactor;
+    document.getElementById('displayWidth').value = settings.displayWidth;
     document.getElementById('hoverDelay').value = settings.hoverDelay;
-    document.getElementById('minImageSize').value = settings.minImageSize;
-    document.getElementById('maxEnlargedSize').value = settings.maxEnlargedSize;
 
     // Set select value
     document.getElementById('displayPosition').value = settings.displayPosition;
@@ -42,10 +40,8 @@ function saveSettings() {
     enlargeImages: document.getElementById('enlargeImages').checked,
     showImagesFromLinks: document.getElementById('showImagesFromLinks').checked,
     showVideosFromLinks: document.getElementById('showVideosFromLinks').checked,
-    zoomFactor: parseFloat(document.getElementById('zoomFactor').value),
+    displayWidth: parseInt(document.getElementById('displayWidth').value),
     hoverDelay: parseInt(document.getElementById('hoverDelay').value),
-    minImageSize: parseInt(document.getElementById('minImageSize').value),
-    maxEnlargedSize: parseInt(document.getElementById('maxEnlargedSize').value),
     displayPosition: document.getElementById('displayPosition').value,
     excludedDomains: document
       .getElementById('excludedDomains')
@@ -86,11 +82,9 @@ function resetSettings() {
     enlargeImages: true,
     showImagesFromLinks: true,
     showVideosFromLinks: true,
-    zoomFactor: 2,
-    hoverDelay: 300,
+    displayWidth: 800,
+    hoverDelay: 100,
     displayPosition: 'cursor',
-    minImageSize: 50,
-    maxEnlargedSize: 800,
     excludedDomains: []
   };
 
