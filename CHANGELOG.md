@@ -3,8 +3,8 @@
 ## [Unreleased]
 
 ### Fixed
+- **P1** Loading/error text now has light gray background for consistent contrast on white overlay
 - **P0** Core display logic: images are now always scaled to `displayWidth` (was: small images stayed small, only large images were constrained)
-- **P1** Loading/error text contrast on white overlay background
 - **P2** `positionOverlaySmartly()` triggers `requestAnimationFrame` on every mousemove (performance)
 
 ### Changed

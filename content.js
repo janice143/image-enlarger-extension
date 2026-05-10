@@ -207,7 +207,7 @@ function showEnlargedImage(img, event) {
   enlargedImg.src = img.src;
 
   // Add loading indicator
-  overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Loading...</div>';
+  overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Loading...</div>';
   overlay.style.display = 'block';
 
   // Position the overlay initially
@@ -239,7 +239,7 @@ function showEnlargedImage(img, event) {
 
   // Handle image load errors
   enlargedImg.onerror = function () {
-    overlay.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">Error loading image</div>';
+    overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Error loading image</div>';
   };
 }
 
@@ -248,7 +248,7 @@ function showImageFromLink(url, event) {
   const img = document.createElement('img');
 
   // Add loading indicator
-  overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Loading...</div>';
+  overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Loading...</div>';
   overlay.style.display = 'block';
 
   // Position the overlay initially
@@ -282,7 +282,7 @@ function showImageFromLink(url, event) {
 
   // Handle image load errors
   img.onerror = function () {
-    overlay.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">Error loading image</div>';
+    overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Error loading image</div>';
   };
 }
 
@@ -297,7 +297,7 @@ function showVideoFromLink(url, event) {
   video.style.maxHeight = `${settings.displayWidth}px`;
 
   // Add loading indicator
-  overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Loading video...</div>';
+  overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Loading video...</div>';
   overlay.style.display = 'block';
 
   // Position the overlay initially
