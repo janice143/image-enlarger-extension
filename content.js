@@ -27,6 +27,8 @@ document.body.appendChild(overlay);
 let hoverTimer = null;
 let currentTarget = null;
 let lastEvent = null;
+let lastPositionUpdate = 0;
+const POSITION_THROTTLE_MS = 50;
 
 function initializeEnlarger() {
   if (!settings.enlargeOnHover) return;
@@ -324,6 +326,11 @@ function positionOverlaySmartly(event) {
     positionOverlayFixed();
     return;
   }
+
+  // Throttle position updates to avoid performance issues
+  const now = Date.now();
+  if (now - lastPositionUpdate < POSITION_THROTTLE_MS) return;
+  lastPositionUpdate = now;
 
   // Get viewport dimensions
   const viewportWidth = window.innerWidth;
