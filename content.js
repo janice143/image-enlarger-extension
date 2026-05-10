@@ -10,19 +10,27 @@ chrome.storage.sync.get('imageEnlargerSettings', (data) => {
   if (data.imageEnlargerSettings) {
     settings = { ...settings, ...data.imageEnlargerSettings };
   }
-  // Ensure displayWidth is always a number (fallback to 800)
-  settings.displayWidth = Number(settings.displayWidth) || 800;
-  // Ensure includedDomains is an array with at least ['*']
-  if (!Array.isArray(settings.includedDomains)) {
+  // Normalize includedDomains: must be array, default to ['*']
+  const rawDomains = settings.includedDomains;
+  if (typeof rawDomains === 'string' && rawDomains.trim()) {
+    settings.includedDomains = rawDomains.split('\n').map(d => d.trim()).filter(d => d);
+  } else if (!Array.isArray(rawDomains) || rawDomains.length === 0) {
     settings.includedDomains = ['*'];
   }
+  settings.displayWidth = Number(settings.displayWidth) || 800;
   initializeEnlarger();
 });
 
 // Check if current domain is in the included list
 function isDomainEnabled() {
-  const domains = Array.isArray(settings.includedDomains) ? settings.includedDomains : ['*'];
-  if (domains.length === 0 || domains.includes('*')) return true;
+  let domains = settings.includedDomains;
+  // Handle legacy string format or undefined
+  if (typeof domains === 'string') {
+    domains = domains ? [domains] : ['*'];
+  } else if (!Array.isArray(domains) || domains.length === 0) {
+    domains = ['*'];
+  }
+  if (domains.includes('*')) return true;
   const hostname = window.location.hostname.toLowerCase();
   return domains.some(d => {
     const domain = d.toLowerCase();
