@@ -19,13 +19,9 @@
 
 #image-enlarger-overlay img {
   display: block;
-  max-width: 100%;
-  max-height: 80vh;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  margin: 0 auto;
   border: none;
+  width: var(--enlarge-width, 800px);
+  height: auto;
 }
 
 #image-enlarger-overlay video {

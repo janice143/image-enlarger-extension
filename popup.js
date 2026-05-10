@@ -37,8 +37,8 @@ function saveSettings() {
     enlargeOnHover: document.getElementById('enlargeOnHover').checked,
     enlargeImages: document.getElementById('enlargeImages').checked,
     showImagesFromLinks: document.getElementById('showImagesFromLinks').checked,
-    displayWidth: parseInt(document.getElementById('displayWidth').value),
-    hoverDelay: parseInt(document.getElementById('hoverDelay').value),
+    displayWidth: parseInt(document.getElementById('displayWidth').value, 10),
+    hoverDelay: parseInt(document.getElementById('hoverDelay').value, 10),
     displayPosition: document.getElementById('displayPosition').value,
     excludedDomains: document
       .getElementById('excludedDomains')
@@ -46,6 +46,9 @@ function saveSettings() {
       .map((domain) => domain.trim())
       .filter((domain) => domain.length > 0)
   };
+
+  // Force displayWidth to number to avoid storage type issues
+  settings.displayWidth = Number(settings.displayWidth) || 800;
 
   chrome.runtime.sendMessage(
     { action: 'saveSettings', settings },

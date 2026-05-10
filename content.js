@@ -244,12 +244,12 @@ function showEnlargedImage(img, event) {
     const ratio = originalHeight / originalWidth;
 
     // Always display at displayWidth (scale up small images, scale down large ones)
-    let width = settings.displayWidth;
-    let height = width * ratio;
+    const width = settings.displayWidth;
+    const height = width * ratio;
 
-    // Apply dimensions
-    enlargedImg.width = width;
-    enlargedImg.height = height;
+    // Apply via style so CSS custom property can override if needed
+    enlargedImg.style.width = `${width}px`;
+    enlargedImg.style.height = `${height}px`;
 
     overlay.appendChild(enlargedImg);
 
@@ -287,12 +287,12 @@ function showImageFromLink(url, event) {
     const ratio = originalHeight / originalWidth;
 
     // Always display at displayWidth (scale up small images, scale down large ones)
-    let width = settings.displayWidth;
-    let height = width * ratio;
+    const width = settings.displayWidth;
+    const height = width * ratio;
 
-    // Apply dimensions
-    img.width = width;
-    img.height = height;
+    // Apply via style so CSS custom property can override if needed
+    img.style.width = `${width}px`;
+    img.style.height = `${height}px`;
 
     overlay.appendChild(img);
 
