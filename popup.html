@@ -1,95 +1,241 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Image Enlarger Settings</title>
+    <title>Image Enlarger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        width: 300px;
-        padding: 15px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        width: 320px;
+        background: #f8f7f4;
+        color: #1a1a1a;
+        padding: 20px 20px 16px;
+        -webkit-font-smoothing: antialiased;
       }
 
-      h1 {
-        font-size: 18px;
-        margin-bottom: 15px;
+      /* Header */
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
       }
 
-      .setting-group {
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+      .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .header-icon svg {
+        width: 18px;
+        height: 18px;
+        color: white;
+      }
+
+      .header-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #111;
+        letter-spacing: -0.01em;
+      }
+
+      .header-subtitle {
+        font-size: 11px;
+        color: #888;
+        margin-top: 1px;
+      }
+
+      /* Settings */
+      .settings-group {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
       }
 
       .setting-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
       }
 
-      label {
-        margin-right: 10px;
+      .setting-row + .setting-row {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+      }
+
+      .setting-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .setting-hint {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 2px;
       }
 
       input[type='number'] {
-        width: 70px;
+        width: 72px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0 10px;
+        font-size: 13px;
+        font-family: inherit;
+        font-weight: 500;
+        color: #111;
+        background: #fafafa;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+
+      input[type='number']:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: white;
+      }
+
+      /* Domain section */
+      .domain-section {
+        margin-bottom: 12px;
+      }
+
+      .section-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b7280;
+        margin-bottom: 6px;
+        letter-spacing: 0.01em;
       }
 
       textarea {
         width: 100%;
-        height: 60px;
-        margin-top: 5px;
+        height: 72px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 12px;
+        font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        color: #374151;
+        background: #fafafa;
+        resize: none;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        line-height: 1.6;
       }
 
+      textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: white;
+      }
+
+      textarea::placeholder {
+        color: #c4c4c4;
+      }
+
+      /* Buttons */
       .buttons {
         display: flex;
-        justify-content: flex-end;
-        margin-top: 15px;
+        gap: 8px;
       }
 
       button {
-        padding: 8px 15px;
-        margin-left: 10px;
+        flex: 1;
+        height: 36px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
         cursor: pointer;
-      }
-
-      .save-button {
-        background-color: #4285f4;
-        color: white;
+        transition: all 0.15s;
         border: none;
-        border-radius: 4px;
       }
 
-      .reset-button {
-        background-color: #f1f1f1;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+      .btn-reset {
+        background: #f3f4f6;
+        color: #4b5563;
+      }
+
+      .btn-reset:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+      }
+
+      .btn-save {
+        background: #2563eb;
+        color: white;
+      }
+
+      .btn-save:hover {
+        background: #1d4ed8;
+      }
+
+      .btn-save:active, .btn-reset:active {
+        transform: scale(0.98);
       }
     </style>
   </head>
   <body>
-    <h1>Image Enlarger</h1>
+    <div class="header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </div>
+      <div>
+        <div class="header-title">Image Enlarger</div>
+        <div class="header-subtitle">Hover to enlarge thumbnails</div>
+      </div>
+    </div>
 
-    <div class="setting-group">
+    <div class="settings-group">
       <div class="setting-row">
-        <label for="displayWidth">Display width (px)</label>
+        <div>
+          <div class="setting-label">Display width</div>
+          <div class="setting-hint">px, all images scale to this</div>
+        </div>
         <input type="number" id="displayWidth" min="100" max="2000" value="800" />
       </div>
 
       <div class="setting-row">
-        <label for="hoverDelay">Hover delay (ms)</label>
+        <div>
+          <div class="setting-label">Hover delay</div>
+          <div class="setting-hint">milliseconds</div>
+        </div>
         <input type="number" id="hoverDelay" min="0" max="2000" step="50" value="100" />
       </div>
     </div>
 
-    <div class="setting-group">
-      <label for="includedDomains">Active domains (one per line, * = all)</label>
-      <textarea id="includedDomains" placeholder="*&#10;example.com&#10;another-site.com"></textarea>
+    <div class="domain-section">
+      <div class="section-label">Active on domains</div>
+      <textarea id="includedDomains" placeholder="*                 ← all domains&#10;example.com       ← this site only&#10;.example.com     ← + subdomains&#10;docs.example.com  ← specific subdomain"></textarea>
     </div>
 
     <div class="buttons">
-      <button class="reset-button" id="resetButton">Reset</button>
-      <button class="save-button" id="saveButton">Save</button>
+      <button class="btn-reset" id="resetButton">Reset</button>
+      <button class="btn-save" id="saveButton">Save</button>
     </div>
 
     <script src="popup.js"></script>

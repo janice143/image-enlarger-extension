@@ -26,13 +26,12 @@ function loadSettings() {
 function saveSettings() {
   const raw = document.getElementById('includedDomains').value;
   const domains = raw.split('\n').map(d => d.trim()).filter(d => d.length > 0);
-  // Ensure * is always present as default
-  if (!domains.includes('*')) domains.unshift('*');
 
   const settings = {
     displayWidth: Number(document.getElementById('displayWidth').value) || 800,
     hoverDelay: parseInt(document.getElementById('hoverDelay').value, 10) || 100,
-    includedDomains: domains
+    // Only default to ['*'] if domains list is empty (i.e. user never set it)
+    includedDomains: domains.length > 0 ? domains : ['*']
   };
 
   chrome.runtime.sendMessage(
