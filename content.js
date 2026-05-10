@@ -21,13 +21,12 @@ chrome.storage.sync.get('imageEnlargerSettings', (data) => {
 
 // Check if current domain is in the included list
 function isDomainEnabled() {
-  const domains = settings.includedDomains || ['*'];
-  if (domains.includes('*')) return true;
+  const domains = Array.isArray(settings.includedDomains) ? settings.includedDomains : ['*'];
+  if (domains.length === 0 || domains.includes('*')) return true;
   const hostname = window.location.hostname.toLowerCase();
   return domains.some(d => {
     const domain = d.toLowerCase();
     if (domain.startsWith('.')) {
-      // subdomain wildcard: .example.com matches sub.example.com
       return hostname.endsWith(domain) || hostname === domain.slice(1);
     }
     return hostname === domain || hostname.endsWith('.' + domain);
@@ -320,5 +319,12 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'settingsUpdated') {
     settings = { ...settings, ...message.settings };
     settings.displayWidth = Number(settings.displayWidth) || 800;
+    if (!Array.isArray(settings.includedDomains)) {
+      settings.includedDomains = ['*'];
+    }
+    // Re-check domain state — if now disabled, hide overlay
+    if (!isDomainEnabled()) {
+      hideOverlay();
+    }
   }
 });
