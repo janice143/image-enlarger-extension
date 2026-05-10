@@ -14,6 +14,8 @@ chrome.storage.sync.get('imageEnlargerSettings', (data) => {
   if (data.imageEnlargerSettings) {
     settings = { ...settings, ...data.imageEnlargerSettings };
   }
+  // Ensure displayWidth is always a number (fallback to 800)
+  settings.displayWidth = Number(settings.displayWidth) || 800;
   initializeEnlarger();
 });
 
@@ -420,7 +422,10 @@ function hideOverlay() {
 // Listen for settings updates
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'settingsUpdated') {
-    settings = message.settings;
+    const incoming = message.settings;
+    // Merge and normalize types
+    settings = { ...settings, ...incoming };
+    settings.displayWidth = Number(settings.displayWidth) || 800;
     // Re-initialize with new settings
     initializeEnlarger();
   }

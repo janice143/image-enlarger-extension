@@ -51,6 +51,8 @@ function saveSettings() {
     { action: 'saveSettings', settings },
     (response) => {
       if (response.success) {
+        loadSettings();
+
         // Show success message
         const saveButton = document.getElementById('saveButton');
         const originalText = saveButton.textContent;
