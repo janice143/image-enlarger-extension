@@ -3,10 +3,10 @@
 ## [Unreleased]
 
 ### Changed
-- Simplified settings panel to only essential options: display width, hover delay, excluded domains
-- Removed enlargeOnHover, enlargeImages, showImagesFromLinks, showVideosFromLinks, displayPosition toggles (Chrome's built-in disable works as the master switch)
-- Settings stored as `{displayWidth, hoverDelay, excludedDomains}` only
-- Removed isVideoLink, showVideoFromLink, handleLinkEnter from content script
+- Simplified settings panel to only essential options: display width, hover delay, included domains
+- Replaced excludedDomains with includedDomains — plugin now only activates on listed domains
+- `*` (asterisk) in domain list means all domains are enabled (default)
+- Removed enlargeOnHover, enlargeImages, showImagesFromLinks, showVideosFromLinks, displayPosition toggles
 
 ### Fixed
 - **P0** Core display logic: images are now always scaled to `displayWidth` (was: small images stayed small, only large images were constrained)

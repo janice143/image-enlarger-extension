@@ -17,21 +17,22 @@ function loadSettings() {
     document.getElementById('displayWidth').value = settings.displayWidth;
     document.getElementById('hoverDelay').value = settings.hoverDelay;
 
-    // Set excluded domains
-    document.getElementById('excludedDomains').value =
-      (settings.excludedDomains || []).join('\n');
+    // Set included domains
+    document.getElementById('includedDomains').value =
+      (settings.includedDomains || ['*']).join('\n');
   });
 }
 
 function saveSettings() {
+  const raw = document.getElementById('includedDomains').value;
+  const domains = raw.split('\n').map(d => d.trim()).filter(d => d.length > 0);
+  // Ensure * is always present as default
+  if (!domains.includes('*')) domains.unshift('*');
+
   const settings = {
     displayWidth: Number(document.getElementById('displayWidth').value) || 800,
     hoverDelay: parseInt(document.getElementById('hoverDelay').value, 10) || 100,
-    excludedDomains: document
-      .getElementById('excludedDomains')
-      .value.split('\n')
-      .map((domain) => domain.trim())
-      .filter((domain) => domain.length > 0)
+    includedDomains: domains
   };
 
   chrome.runtime.sendMessage(
@@ -66,7 +67,7 @@ function resetSettings() {
   const defaultSettings = {
     displayWidth: 800,
     hoverDelay: 100,
-    excludedDomains: []
+    includedDomains: ['*']
   };
 
   chrome.runtime.sendMessage(

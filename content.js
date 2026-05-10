@@ -2,7 +2,7 @@
 let settings = {
   displayWidth: 800,
   hoverDelay: 100,
-  excludedDomains: []
+  includedDomains: ['*']
 };
 
 // Load settings from storage
@@ -12,8 +12,27 @@ chrome.storage.sync.get('imageEnlargerSettings', (data) => {
   }
   // Ensure displayWidth is always a number (fallback to 800)
   settings.displayWidth = Number(settings.displayWidth) || 800;
+  // Ensure includedDomains is an array with at least ['*']
+  if (!Array.isArray(settings.includedDomains)) {
+    settings.includedDomains = ['*'];
+  }
   initializeEnlarger();
 });
+
+// Check if current domain is in the included list
+function isDomainEnabled() {
+  const domains = settings.includedDomains || ['*'];
+  if (domains.includes('*')) return true;
+  const hostname = window.location.hostname.toLowerCase();
+  return domains.some(d => {
+    const domain = d.toLowerCase();
+    if (domain.startsWith('.')) {
+      // subdomain wildcard: .example.com matches sub.example.com
+      return hostname.endsWith(domain) || hostname === domain.slice(1);
+    }
+    return hostname === domain || hostname.endsWith('.' + domain);
+  });
+}
 
 // Create overlay element for enlarged content
 const overlay = document.createElement('div');
@@ -28,6 +47,8 @@ let lastPositionUpdate = 0;
 const POSITION_THROTTLE_MS = 50;
 
 function initializeEnlarger() {
+  if (!isDomainEnabled()) return;
+
   // Add event listeners for images
   document.querySelectorAll('img').forEach((img) => {
     processNewElement(img);

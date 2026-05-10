@@ -3,7 +3,7 @@ chrome.runtime.onInstalled.addListener(() => {
   const defaultSettings = {
     displayWidth: 800,
     hoverDelay: 100,
-    excludedDomains: []
+    includedDomains: ['*']
   };
 
   chrome.storage.sync.set({ imageEnlargerSettings: defaultSettings });
