@@ -3,7 +3,6 @@ let settings = {
   enlargeOnHover: true,
   enlargeImages: true,
   showImagesFromLinks: true,
-  showVideosFromLinks: true,
   displayWidth: 800,
   hoverDelay: 100,
   displayPosition: 'cursor',
@@ -36,26 +35,14 @@ function initializeEnlarger() {
   // Add event listeners for images
   if (settings.enlargeImages) {
     document.querySelectorAll('img').forEach((img) => {
-      if (shouldProcessImage(img)) {
-        img.addEventListener('mouseenter', handleMouseEnter);
-        img.addEventListener('mouseleave', handleMouseLeave);
-        img.addEventListener('mousemove', handleMouseMove);
-      }
+      processNewElement(img);
     });
   }
 
-  // Add event listeners for links that might contain images/videos
-  if (settings.showImagesFromLinks || settings.showVideosFromLinks) {
+  // Add event listeners for links that might contain images
+  if (settings.showImagesFromLinks) {
     document.querySelectorAll('a').forEach((link) => {
-      const href = link.href.toLowerCase();
-      if (
-        (settings.showImagesFromLinks && isImageLink(href)) ||
-        (settings.showVideosFromLinks && isVideoLink(href))
-      ) {
-        link.addEventListener('mouseenter', handleLinkEnter);
-        link.addEventListener('mouseleave', handleMouseLeave);
-        link.addEventListener('mousemove', handleMouseMove);
-      }
+      processNewElement(link);
     });
   }
 
@@ -107,14 +94,11 @@ function processNewElement(element) {
     element.addEventListener('mouseleave', handleMouseLeave);
     element.addEventListener('mousemove', handleMouseMove);
   } else if (
-    (settings.showImagesFromLinks || settings.showVideosFromLinks) &&
+    settings.showImagesFromLinks &&
     element.tagName === 'A'
   ) {
     const href = element.href.toLowerCase();
-    if (
-      (settings.showImagesFromLinks && isImageLink(href)) ||
-      (settings.showVideosFromLinks && isVideoLink(href))
-    ) {
+    if (settings.showImagesFromLinks && isImageLink(href)) {
       element.addEventListener('mouseenter', handleLinkEnter);
       element.addEventListener('mouseleave', handleMouseLeave);
       element.addEventListener('mousemove', handleMouseMove);
@@ -130,17 +114,51 @@ function processNewElement(element) {
 function shouldProcessImage(img) {
   // Don't process images inside our overlay
   if (img.closest('#image-enlarger-overlay')) return false;
+  return true;
+}
 
-  // Ignore tiny images to avoid clutter
-  return img.width >= 30 && img.height >= 30;
+function attachImageListeners(img) {
+  img.addEventListener('mouseenter', handleMouseEnter);
+  img.addEventListener('mouseleave', handleMouseLeave);
+  img.addEventListener('mousemove', handleMouseMove);
+}
+
+function processNewElement(element) {
+  if (settings.enlargeImages && element.tagName === 'IMG') {
+    if (shouldProcessImage(element)) {
+      const w = element.width || element.offsetWidth;
+      const h = element.height || element.offsetHeight;
+
+      if (w >= 30 && h >= 30) {
+        attachImageListeners(element);
+      } else if (w === 0 || h === 0) {
+        // Lazy-loaded: wait for load/error, then attach if still valid
+        const handler = () => {
+          element.removeEventListener('load', handler);
+          element.removeEventListener('error', handler);
+          if (shouldProcessImage(element)) attachImageListeners(element);
+        };
+        element.addEventListener('load', handler);
+        element.addEventListener('error', handler);
+      }
+    }
+  } else if (settings.showImagesFromLinks && element.tagName === 'A') {
+    const href = element.href.toLowerCase();
+    if (settings.showImagesFromLinks && isImageLink(href)) {
+      element.addEventListener('mouseenter', handleLinkEnter);
+      element.addEventListener('mouseleave', handleMouseLeave);
+      element.addEventListener('mousemove', handleMouseMove);
+    }
+  }
+
+  // Process child elements
+  element.querySelectorAll('img, a').forEach((el) => {
+    processNewElement(el);
+  });
 }
 
 function isImageLink(url) {
   return /\.(jpe?g|png|gif|webp|svg|bmp)(\?.*)?$/i.test(url);
-}
-
-function isVideoLink(url) {
-  return /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
 }
 
 function handleMouseEnter(event) {
@@ -177,8 +195,6 @@ function handleLinkEnter(event) {
     const href = event.target.href;
     if (settings.showImagesFromLinks && isImageLink(href)) {
       showImageFromLink(href, event);
-    } else if (settings.showVideosFromLinks && isVideoLink(href)) {
-      showVideoFromLink(href, event);
     }
   }, settings.hoverDelay);
 }
@@ -285,39 +301,6 @@ function showImageFromLink(url, event) {
   // Handle image load errors
   img.onerror = function () {
     overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Error loading image</div>';
-  };
-}
-
-function showVideoFromLink(url, event) {
-  // Create video element
-  const video = document.createElement('video');
-  video.src = url;
-  video.controls = true;
-  video.autoplay = true;
-  video.muted = true;
-  video.style.maxWidth = `${settings.displayWidth}px`;
-  video.style.maxHeight = `${settings.displayWidth}px`;
-
-  // Add loading indicator
-  overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Loading video...</div>';
-  overlay.style.display = 'block';
-
-  // Position the overlay initially
-  positionOverlaySmartly(event);
-
-  // When video can play, update the overlay
-  video.oncanplay = function () {
-    // Clear overlay and add video
-    overlay.innerHTML = '';
-    overlay.appendChild(video);
-
-    // Reposition after video is loaded
-    positionOverlaySmartly(event);
-  };
-
-  // Handle video load errors
-  video.onerror = function () {
-    overlay.innerHTML = '<div style="color: #333; text-align: center; padding: 20px;">Error loading video</div>';
   };
 }
 

@@ -4,7 +4,6 @@ chrome.runtime.onInstalled.addListener(() => {
     enlargeOnHover: true,
     enlargeImages: true,
     showImagesFromLinks: true,
-    showVideosFromLinks: true,
     displayWidth: 800,
     hoverDelay: 100,
     displayPosition: 'cursor',

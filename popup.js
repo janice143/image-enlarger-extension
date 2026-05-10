@@ -18,8 +18,6 @@ function loadSettings() {
     document.getElementById('enlargeImages').checked = settings.enlargeImages;
     document.getElementById('showImagesFromLinks').checked =
       settings.showImagesFromLinks;
-    document.getElementById('showVideosFromLinks').checked =
-      settings.showVideosFromLinks;
 
     // Set number input values
     document.getElementById('displayWidth').value = settings.displayWidth;
@@ -39,7 +37,6 @@ function saveSettings() {
     enlargeOnHover: document.getElementById('enlargeOnHover').checked,
     enlargeImages: document.getElementById('enlargeImages').checked,
     showImagesFromLinks: document.getElementById('showImagesFromLinks').checked,
-    showVideosFromLinks: document.getElementById('showVideosFromLinks').checked,
     displayWidth: parseInt(document.getElementById('displayWidth').value),
     hoverDelay: parseInt(document.getElementById('hoverDelay').value),
     displayPosition: document.getElementById('displayPosition').value,
@@ -81,7 +78,6 @@ function resetSettings() {
     enlargeOnHover: true,
     enlargeImages: true,
     showImagesFromLinks: true,
-    showVideosFromLinks: true,
     displayWidth: 800,
     hoverDelay: 100,
     displayPosition: 'cursor',
