@@ -5,7 +5,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        width: 350px;
+        width: 300px;
         padding: 15px;
       }
 
@@ -24,7 +24,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
       }
 
       label {
@@ -32,15 +32,7 @@
       }
 
       input[type='number'] {
-        width: 60px;
-      }
-
-      select {
-        width: 120px;
-      }
-
-      .excluded-domains {
-        margin-top: 10px;
+        width: 70px;
       }
 
       textarea {
@@ -76,24 +68,7 @@
     </style>
   </head>
   <body>
-    <h1>Image Enlarger Settings</h1>
-
-    <div class="setting-group">
-      <div class="setting-row">
-        <label for="enlargeOnHover">Enable enlargement on hover</label>
-        <input type="checkbox" id="enlargeOnHover" />
-      </div>
-
-      <div class="setting-row">
-        <label for="enlargeImages">Enlarge images</label>
-        <input type="checkbox" id="enlargeImages" />
-      </div>
-
-      <div class="setting-row">
-        <label for="showImagesFromLinks">Show images from links</label>
-        <input type="checkbox" id="showImagesFromLinks" />
-      </div>
-    </div>
+    <h1>Image Enlarger</h1>
 
     <div class="setting-group">
       <div class="setting-row">
@@ -105,26 +80,16 @@
         <label for="hoverDelay">Hover delay (ms)</label>
         <input type="number" id="hoverDelay" min="0" max="2000" step="50" value="100" />
       </div>
-
-      <div class="setting-row">
-        <label for="displayPosition">Display position</label>
-        <select id="displayPosition">
-          <option value="cursor">Follow cursor</option>
-          <option value="fixed">Fixed center</option>
-        </select>
-      </div>
     </div>
 
     <div class="setting-group">
       <label for="excludedDomains">Excluded domains (one per line)</label>
-      <div class="excluded-domains">
-        <textarea id="excludedDomains" placeholder="example.com"></textarea>
-      </div>
+      <textarea id="excludedDomains" placeholder="example.com"></textarea>
     </div>
 
     <div class="buttons">
-      <button class="reset-button" id="resetButton">Reset to Default</button>
-      <button class="save-button" id="saveButton">Save Settings</button>
+      <button class="reset-button" id="resetButton">Reset</button>
+      <button class="save-button" id="saveButton">Save</button>
     </div>
 
     <script src="popup.js"></script>

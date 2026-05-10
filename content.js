@@ -1,11 +1,7 @@
 // Global settings with defaults
 let settings = {
-  enlargeOnHover: true,
-  enlargeImages: true,
-  showImagesFromLinks: true,
   displayWidth: 800,
   hoverDelay: 100,
-  displayPosition: 'cursor',
   excludedDomains: []
 };
 
@@ -32,21 +28,10 @@ let lastPositionUpdate = 0;
 const POSITION_THROTTLE_MS = 50;
 
 function initializeEnlarger() {
-  if (!settings.enlargeOnHover) return;
-
   // Add event listeners for images
-  if (settings.enlargeImages) {
-    document.querySelectorAll('img').forEach((img) => {
-      processNewElement(img);
-    });
-  }
-
-  // Add event listeners for links that might contain images
-  if (settings.showImagesFromLinks) {
-    document.querySelectorAll('a').forEach((link) => {
-      processNewElement(link);
-    });
-  }
+  document.querySelectorAll('img').forEach((img) => {
+    processNewElement(img);
+  });
 
   // Handle dynamically added content
   const observer = new MutationObserver((mutations) => {
@@ -86,33 +71,6 @@ function initializeEnlarger() {
   );
 }
 
-function processNewElement(element) {
-  if (
-    settings.enlargeImages &&
-    element.tagName === 'IMG' &&
-    shouldProcessImage(element)
-  ) {
-    element.addEventListener('mouseenter', handleMouseEnter);
-    element.addEventListener('mouseleave', handleMouseLeave);
-    element.addEventListener('mousemove', handleMouseMove);
-  } else if (
-    settings.showImagesFromLinks &&
-    element.tagName === 'A'
-  ) {
-    const href = element.href.toLowerCase();
-    if (settings.showImagesFromLinks && isImageLink(href)) {
-      element.addEventListener('mouseenter', handleLinkEnter);
-      element.addEventListener('mouseleave', handleMouseLeave);
-      element.addEventListener('mousemove', handleMouseMove);
-    }
-  }
-
-  // Process child elements
-  element.querySelectorAll('img, a').forEach((el) => {
-    processNewElement(el);
-  });
-}
-
 function shouldProcessImage(img) {
   // Don't process images inside our overlay
   if (img.closest('#image-enlarger-overlay')) return false;
@@ -144,19 +102,12 @@ function processNewElement(element) {
         element.addEventListener('error', handler);
       }
     }
-  } else if (settings.showImagesFromLinks && element.tagName === 'A') {
-    const href = element.href.toLowerCase();
-    if (settings.showImagesFromLinks && isImageLink(href)) {
-      element.addEventListener('mouseenter', handleLinkEnter);
-      element.addEventListener('mouseleave', handleMouseLeave);
-      element.addEventListener('mousemove', handleMouseMove);
-    }
+  } else if (element.tagName === 'A') {
+    // Process link children but don't attach link listeners
+    element.querySelectorAll('img, a').forEach((el) => {
+      processNewElement(el);
+    });
   }
-
-  // Process child elements
-  element.querySelectorAll('img, a').forEach((el) => {
-    processNewElement(el);
-  });
 }
 
 function isImageLink(url) {
@@ -183,24 +134,6 @@ function handleMouseEnter(event) {
   }, settings.hoverDelay);
 }
 
-function handleLinkEnter(event) {
-  lastEvent = event;
-  currentTarget = event.target;
-
-  // Clear any existing timer
-  if (hoverTimer) {
-    clearTimeout(hoverTimer);
-  }
-
-  // Set timer for hover delay
-  hoverTimer = setTimeout(() => {
-    const href = event.target.href;
-    if (settings.showImagesFromLinks && isImageLink(href)) {
-      showImageFromLink(href, event);
-    }
-  }, settings.hoverDelay);
-}
-
 function handleMouseLeave() {
   if (hoverTimer) {
     clearTimeout(hoverTimer);
@@ -213,10 +146,7 @@ function handleMouseLeave() {
 
 function handleMouseMove(event) {
   lastEvent = event;
-  if (
-    overlay.style.display !== 'none' &&
-    settings.displayPosition === 'cursor'
-  ) {
+  if (overlay.style.display !== 'none') {
     positionOverlaySmartly(event);
   }
 }
@@ -263,55 +193,7 @@ function showEnlargedImage(img, event) {
   };
 }
 
-function showImageFromLink(url, event) {
-  // Create image element
-  const img = document.createElement('img');
-
-  // Add loading indicator
-  overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Loading...</div>';
-  overlay.style.display = 'block';
-
-  // Position the overlay initially
-  positionOverlaySmartly(event);
-
-  img.src = url;
-
-  // When image loads, update the overlay
-  img.onload = function () {
-    // Clear overlay and add image
-    overlay.innerHTML = '';
-
-    // Calculate dimensions to fit displayWidth while maintaining aspect ratio
-    const originalWidth = img.naturalWidth;
-    const originalHeight = img.naturalHeight;
-    const ratio = originalHeight / originalWidth;
-
-    // Always display at displayWidth (scale up small images, scale down large ones)
-    const width = settings.displayWidth;
-    const height = width * ratio;
-
-    // Apply via style so CSS custom property can override if needed
-    img.style.width = `${width}px`;
-    img.style.height = `${height}px`;
-
-    overlay.appendChild(img);
-
-    // Reposition after image is loaded
-    positionOverlaySmartly(event);
-  };
-
-  // Handle image load errors
-  img.onerror = function () {
-    overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Error loading image</div>';
-  };
-}
-
 function positionOverlaySmartly(event) {
-  if (settings.displayPosition === 'fixed') {
-    positionOverlayFixed();
-    return;
-  }
-
   // Throttle position updates to avoid performance issues
   const now = Date.now();
   if (now - lastPositionUpdate < POSITION_THROTTLE_MS) return;
@@ -407,13 +289,6 @@ function positionOverlaySmartly(event) {
   });
 }
 
-function positionOverlayFixed() {
-  // Position in the center of the screen
-  overlay.style.left = '50%';
-  overlay.style.top = '50%';
-  overlay.style.transform = 'translate(-50%, -50%)';
-}
-
 function hideOverlay() {
   overlay.style.display = 'none';
   overlay.innerHTML = '';
@@ -422,11 +297,7 @@ function hideOverlay() {
 // Listen for settings updates
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'settingsUpdated') {
-    const incoming = message.settings;
-    // Merge and normalize types
-    settings = { ...settings, ...incoming };
+    settings = { ...settings, ...message.settings };
     settings.displayWidth = Number(settings.displayWidth) || 800;
-    // Re-initialize with new settings
-    initializeEnlarger();
   }
 });

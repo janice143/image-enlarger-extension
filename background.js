@@ -1,12 +1,8 @@
 // Initialize default settings when extension is installed
 chrome.runtime.onInstalled.addListener(() => {
   const defaultSettings = {
-    enlargeOnHover: true,
-    enlargeImages: true,
-    showImagesFromLinks: true,
     displayWidth: 800,
     hoverDelay: 100,
-    displayPosition: 'cursor',
     excludedDomains: []
   };
 

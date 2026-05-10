@@ -13,42 +13,26 @@ function loadSettings() {
   chrome.runtime.sendMessage({ action: 'getSettings' }, (settings) => {
     if (!settings) return;
 
-    // Set checkbox values
-    document.getElementById('enlargeOnHover').checked = settings.enlargeOnHover;
-    document.getElementById('enlargeImages').checked = settings.enlargeImages;
-    document.getElementById('showImagesFromLinks').checked =
-      settings.showImagesFromLinks;
-
     // Set number input values
     document.getElementById('displayWidth').value = settings.displayWidth;
     document.getElementById('hoverDelay').value = settings.hoverDelay;
 
-    // Set select value
-    document.getElementById('displayPosition').value = settings.displayPosition;
-
     // Set excluded domains
     document.getElementById('excludedDomains').value =
-      settings.excludedDomains.join('\n');
+      (settings.excludedDomains || []).join('\n');
   });
 }
 
 function saveSettings() {
   const settings = {
-    enlargeOnHover: document.getElementById('enlargeOnHover').checked,
-    enlargeImages: document.getElementById('enlargeImages').checked,
-    showImagesFromLinks: document.getElementById('showImagesFromLinks').checked,
-    displayWidth: parseInt(document.getElementById('displayWidth').value, 10),
-    hoverDelay: parseInt(document.getElementById('hoverDelay').value, 10),
-    displayPosition: document.getElementById('displayPosition').value,
+    displayWidth: Number(document.getElementById('displayWidth').value) || 800,
+    hoverDelay: parseInt(document.getElementById('hoverDelay').value, 10) || 100,
     excludedDomains: document
       .getElementById('excludedDomains')
       .value.split('\n')
       .map((domain) => domain.trim())
       .filter((domain) => domain.length > 0)
   };
-
-  // Force displayWidth to number to avoid storage type issues
-  settings.displayWidth = Number(settings.displayWidth) || 800;
 
   chrome.runtime.sendMessage(
     { action: 'saveSettings', settings },
@@ -80,12 +64,8 @@ function saveSettings() {
 
 function resetSettings() {
   const defaultSettings = {
-    enlargeOnHover: true,
-    enlargeImages: true,
-    showImagesFromLinks: true,
     displayWidth: 800,
     hoverDelay: 100,
-    displayPosition: 'cursor',
     excludedDomains: []
   };
 
@@ -98,7 +78,7 @@ function resetSettings() {
         // Show reset message
         const resetButton = document.getElementById('resetButton');
         const originalText = resetButton.textContent;
-        resetButton.textContent = 'Reset Complete!';
+        resetButton.textContent = 'Done';
         setTimeout(() => {
           resetButton.textContent = originalText;
         }, 1500);
