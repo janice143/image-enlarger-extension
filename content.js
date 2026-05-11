@@ -112,7 +112,7 @@ function attachImageListeners(img) {
 }
 
 function processNewElement(element) {
-  if (settings.enlargeImages && element.tagName === 'IMG') {
+  if (element.tagName === 'IMG') {
     if (shouldProcessImage(element)) {
       const w = element.width || element.offsetWidth;
       const h = element.height || element.offsetHeight;
