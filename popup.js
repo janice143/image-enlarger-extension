@@ -17,15 +17,15 @@ function loadSettings() {
     document.getElementById('displayWidth').value = settings.displayWidth;
     document.getElementById('hoverDelay').value = settings.hoverDelay;
 
-    // Set included domains (comma-separated)
-    document.getElementById('includedDomains').value =
-      (settings.includedDomains || ['*']).join(',');
+    // Set included domains (comma or newline separated)
+    const domains = (settings.includedDomains || ['*']).join(',');
   });
 }
 
 function saveSettings() {
   const raw = document.getElementById('includedDomains').value;
-  const domains = raw.split(',').map(d => d.trim()).filter(d => d.length > 0);
+  // Support both comma and newline as separators
+  const domains = raw.split(/[,\n]/).map(d => d.trim()).filter(d => d.length > 0);
 
   const settings = {
     displayWidth: Number(document.getElementById('displayWidth').value) || 800,

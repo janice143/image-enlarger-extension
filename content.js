@@ -13,11 +13,11 @@ chrome.storage.sync.get('imageEnlargerSettings', (data) => {
   // Normalize includedDomains: must be array, default to ['*']
   const rawDomains = settings.includedDomains;
   if (typeof rawDomains === 'string' && rawDomains.trim()) {
-    settings.includedDomains = rawDomains.split(',').map(d => d.trim()).filter(d => d);
-  } else if (!Array.isArray(rawDomains) || rawDomains.length === 0) {
+    settings.includedDomains = rawDomains.split(/[,\n]/).map(d => d.trim()).filter(d => d);
+  } else {
     settings.includedDomains = ['*'];
   }
-  settings.displayWidth = Number(settings.displayWidth) || 800;
+  settings.displayWidth = Number(settings.displayWidth) || 600;
   initializeEnlarger();
 });
 
@@ -132,6 +132,8 @@ function shouldProcessImage(img) {
 }
 
 function attachImageListeners(img) {
+  if (img._enlargerAttached) return;
+  img._enlargerAttached = true;
   img.addEventListener('mouseenter', handleMouseEnter);
   img.addEventListener('mouseleave', handleMouseLeave);
   img.addEventListener('mousemove', handleMouseMove);
@@ -204,16 +206,6 @@ function showEnlargedImage(element, event) {
     imageSrc = element.src;
   } else if (tag === 'A' && isImageLink(element.href)) {
     imageSrc = element.href;
-  } else {
-    // Try to get CSS background image
-    const bgImage = window.getComputedStyle(element).backgroundImage;
-    if (bgImage && bgImage !== 'none') {
-      // Extract URL from background-image: url("...")
-      const match = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
-      if (match) {
-        imageSrc = match[1];
-      }
-    }
   }
 
   if (!imageSrc) {
@@ -368,7 +360,7 @@ function hideOverlay() {
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'settingsUpdated') {
     settings = { ...settings, ...message.settings };
-    settings.displayWidth = Number(settings.displayWidth) || 800;
+    settings.displayWidth = Number(settings.displayWidth) || 600;
     if (!Array.isArray(settings.includedDomains)) {
       settings.includedDomains = ['*'];
     }
