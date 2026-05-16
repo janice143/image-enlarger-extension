@@ -133,8 +133,9 @@
         display: inline-flex;
         align-items: center;
         cursor: help;
-        color: #9ca3af;
+        color: #d1d5db;
         position: relative;
+        margin-left: 4px;
       }
 
       .info-icon svg {
@@ -148,24 +149,25 @@
 
       .tooltip {
         position: absolute;
-        bottom: calc(100% + 6px);
+        bottom: calc(100% + 10px);
         left: 50%;
-        transform: translateX(-50%);
-        background: #1f2937;
-        color: #f3f4f6;
-        font-size: 11px;
+        transform: translateX(-50%) scale(0.95);
+        background: #111827;
+        color: #f9fafb;
+        font-size: 11.5px;
         font-weight: 400;
-        line-height: 1.5;
-        padding: 8px 10px;
-        border-radius: 8px;
-        width: 240px;
+        line-height: 1.6;
+        padding: 10px 14px;
+        border-radius: 10px;
+        width: 260px;
         pointer-events: none;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.15s, visibility 0.15s;
+        transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
         z-index: 100;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        text-align: left;
       }
 
       .tooltip::after {
@@ -174,13 +176,14 @@
         top: 100%;
         left: 50%;
         transform: translateX(-50%);
-        border: 5px solid transparent;
-        border-top-color: #1f2937;
+        border: 6px solid transparent;
+        border-top-color: #111827;
       }
 
       .info-icon:hover .tooltip {
         opacity: 1;
         visibility: visible;
+        transform: translateX(-50%) scale(1);
       }
 
       textarea {
@@ -273,7 +276,7 @@
           <div class="setting-label">Display width</div>
           <div class="setting-hint">px, all images scale to this</div>
         </div>
-        <input type="number" id="displayWidth" min="100" max="2000" value="800" />
+        <input type="number" id="displayWidth" min="100" max="2000" value="600" />
       </div>
 
       <div class="setting-row">
@@ -295,9 +298,12 @@
             <line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
           <div class="tooltip">
-            <strong>*</strong> all domains<br/>
-            <strong>example.com</strong>  this domain only<br/>
-            <strong>.example.com</strong> this domain + all subdomains
+            <div style="margin-bottom:6px;"><span style="color:#60a5fa;">*</span> Enable on all domains</div>
+            <div style="margin-bottom:6px;"><span style="color:#60a5fa;">example.com</span> Enable on this domain only</div>
+            <div style="margin-bottom:6px;"><span style="color:#60a5fa;">.example.com</span> Enable on domain + all subdomains</div>
+            <div style="border-top:1px solid #374151;margin:8px 0;padding-top:8px;">
+              Separate multiple domains with commas
+            </div>
           </div>
         </span>
       </div>

@@ -17,15 +17,15 @@ function loadSettings() {
     document.getElementById('displayWidth').value = settings.displayWidth;
     document.getElementById('hoverDelay').value = settings.hoverDelay;
 
-    // Set included domains
+    // Set included domains (comma-separated)
     document.getElementById('includedDomains').value =
-      (settings.includedDomains || ['*']).join('\n');
+      (settings.includedDomains || ['*']).join(',');
   });
 }
 
 function saveSettings() {
   const raw = document.getElementById('includedDomains').value;
-  const domains = raw.split('\n').map(d => d.trim()).filter(d => d.length > 0);
+  const domains = raw.split(',').map(d => d.trim()).filter(d => d.length > 0);
 
   const settings = {
     displayWidth: Number(document.getElementById('displayWidth').value) || 800,
@@ -57,6 +57,8 @@ function saveSettings() {
             });
           }
         });
+
+        setTimeout(() => window.close(), 300);
       }
     }
   );
@@ -64,7 +66,7 @@ function saveSettings() {
 
 function resetSettings() {
   const defaultSettings = {
-    displayWidth: 800,
+    displayWidth: 600,
     hoverDelay: 100,
     includedDomains: ['*']
   };
@@ -92,6 +94,8 @@ function resetSettings() {
             });
           }
         });
+
+        setTimeout(() => window.close(), 300);
       }
     }
   );

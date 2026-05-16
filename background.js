@@ -1,7 +1,7 @@
 // Initialize default settings when extension is installed
 chrome.runtime.onInstalled.addListener(() => {
   const defaultSettings = {
-    displayWidth: 800,
+    displayWidth: 600,
     hoverDelay: 100,
     includedDomains: ['*']
   };

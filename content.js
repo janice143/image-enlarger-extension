@@ -1,6 +1,6 @@
 // Global settings with defaults
 let settings = {
-  displayWidth: 800,
+  displayWidth: 600,
   hoverDelay: 100,
   includedDomains: ['*']
 };
@@ -13,7 +13,7 @@ chrome.storage.sync.get('imageEnlargerSettings', (data) => {
   // Normalize includedDomains: must be array, default to ['*']
   const rawDomains = settings.includedDomains;
   if (typeof rawDomains === 'string' && rawDomains.trim()) {
-    settings.includedDomains = rawDomains.split('\n').map(d => d.trim()).filter(d => d);
+    settings.includedDomains = rawDomains.split(',').map(d => d.trim()).filter(d => d);
   } else if (!Array.isArray(rawDomains) || rawDomains.length === 0) {
     settings.includedDomains = ['*'];
   }
@@ -58,8 +58,34 @@ function initializeEnlarger() {
 
   // Add event listeners for images
   document.querySelectorAll('img').forEach((img) => {
-    processNewElement(img);
+    if (shouldProcessImage(img)) {
+      attachImageListeners(img);
+    }
   });
+
+  // Add event listeners for anchors linking to images
+  document.querySelectorAll('a').forEach((anchor) => {
+    if (isImageLink(anchor.href)) {
+      attachImageListeners(anchor);
+    }
+  });
+
+  // Event delegation: catch mouseenter on any element and find nested images
+  // This ensures deeply nested or dynamically added images are handled
+  document.addEventListener('mouseenter', (event) => {
+    if (event.target.closest('#image-enlarger-overlay')) return;
+    if (event.target === document.body || event.target === document.documentElement) return;
+
+    // Find the closest img element (could be the target itself or a parent)
+    let targetImg = event.target.closest('img');
+    if (!targetImg || !shouldProcessImage(targetImg)) return;
+
+    // Attach listeners and trigger enlargement
+    if (!targetImg._enlargerAttached) {
+      attachImageListeners(targetImg);
+      targetImg._enlargerAttached = true;
+    }
+  }, true); // Capture phase
 
   // Handle dynamically added content
   const observer = new MutationObserver((mutations) => {
@@ -114,28 +140,20 @@ function attachImageListeners(img) {
 function processNewElement(element) {
   if (element.tagName === 'IMG') {
     if (shouldProcessImage(element)) {
-      const w = element.width || element.offsetWidth;
-      const h = element.height || element.offsetHeight;
-
-      if (w >= 30 && h >= 30) {
-        attachImageListeners(element);
-      } else if (w === 0 || h === 0) {
-        // Lazy-loaded: wait for load/error, then attach if still valid
-        const handler = () => {
-          element.removeEventListener('load', handler);
-          element.removeEventListener('error', handler);
-          if (shouldProcessImage(element)) attachImageListeners(element);
-        };
-        element.addEventListener('load', handler);
-        element.addEventListener('error', handler);
-      }
+      attachImageListeners(element);
     }
   } else if (element.tagName === 'A') {
-    // Process link children but don't attach link listeners
+    // If anchor links directly to an image, attach listeners to the anchor itself
+    if (isImageLink(element.href)) {
+      attachImageListeners(element);
+    }
+    // Also process any nested images or anchors
     element.querySelectorAll('img, a').forEach((el) => {
       processNewElement(el);
     });
   }
+  // Note: CSS background images are handled in showEnlargedImage via getComputedStyle
+  // so we also attach listeners to any element that might have one
 }
 
 function isImageLink(url) {
@@ -156,9 +174,7 @@ function handleMouseEnter(event) {
 
   // Set timer for hover delay
   hoverTimer = setTimeout(() => {
-    if (event.target.tagName === 'IMG') {
-      showEnlargedImage(event.target, event);
-    }
+    showEnlargedImage(event.target, event);
   }, settings.hoverDelay);
 }
 
@@ -179,10 +195,36 @@ function handleMouseMove(event) {
   }
 }
 
-function showEnlargedImage(img, event) {
+function showEnlargedImage(element, event) {
+  // Determine the image URL based on element type
+  let imageSrc;
+  const tag = element.tagName;
+
+  if (tag === 'IMG') {
+    imageSrc = element.src;
+  } else if (tag === 'A' && isImageLink(element.href)) {
+    imageSrc = element.href;
+  } else {
+    // Try to get CSS background image
+    const bgImage = window.getComputedStyle(element).backgroundImage;
+    if (bgImage && bgImage !== 'none') {
+      // Extract URL from background-image: url("...")
+      const match = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
+      if (match) {
+        imageSrc = match[1];
+      }
+    }
+  }
+
+  if (!imageSrc) {
+    // No image source found, skip
+    hideOverlay();
+    return;
+  }
+
   // Create enlarged image
   const enlargedImg = document.createElement('img');
-  enlargedImg.src = img.src;
+  enlargedImg.src = imageSrc;
 
   // Add loading indicator
   overlay.innerHTML = '<div style="background:#f5f5f5; color:#333; text-align:center; padding:20px; border-radius:4px;">Loading...</div>';
